@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Cs451RGroupProjectBackEndApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Cs451RGroupProjectBackEndApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Cs451RGroupProjectBackEndApplication.class, args);
+    }
 
 }
