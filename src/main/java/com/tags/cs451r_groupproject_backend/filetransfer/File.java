@@ -10,16 +10,14 @@ import lombok.*;
 @Setter
 public class File {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.NONE)
-    private String id;
+    @GeneratedValue
+    private Long id;
 
     private String name;
 
-    @Column(name = "file_name")
     private String type;
 
-    @Column(name = "file_data")
+    @Column(name = "file_data", columnDefinition = "LONGBLOB")
     @Lob
     private byte[] data;
 

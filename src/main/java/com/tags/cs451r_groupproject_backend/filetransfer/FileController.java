@@ -18,7 +18,7 @@ public class FileController {
     private FileStorageService storageService;
 
     @GetMapping("/files/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+    public ResponseEntity<byte[]> getFile(@PathVariable Long id) {
         File file = storageService.getFile(id);
 
         return ResponseEntity.ok()
@@ -34,7 +34,7 @@ public class FileController {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/files/")
-                    .path(file.getId())
+                    .path(String.valueOf(file.getId()))
                     .toUriString();
             return new ResponseFile(
                     file.getName(),
