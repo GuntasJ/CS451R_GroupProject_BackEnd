@@ -15,7 +15,7 @@ import lombok.*;
 public class Application {
     @Id
     @GeneratedValue
-    private Long Id;
+    private Long id;
 
     private String firstName;
 

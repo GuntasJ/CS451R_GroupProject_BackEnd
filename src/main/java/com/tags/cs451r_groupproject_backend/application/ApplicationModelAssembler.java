@@ -18,7 +18,7 @@ public class ApplicationModelAssembler implements RepresentationModelAssembler<A
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
                         ApplicationController.class).retrieveApplication(application.getId())).withSelfRel(),
                 WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(
-                        ApplicationController.class).retrieveAllApplications()).withRel("employees")
+                        ApplicationController.class).retrieveAllApplications()).withRel("applications")
         );
     }
 }

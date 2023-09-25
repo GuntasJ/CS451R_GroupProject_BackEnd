@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("tags/v1")
+@RequestMapping("tags/api/v1")
 @AllArgsConstructor
 public class ApplicationController {
 
