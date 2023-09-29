@@ -1,7 +1,6 @@
 package com.tags.cs451r_groupproject_backend.application;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.bytecode.enhance.spi.EnhancementInfo;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -9,6 +8,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +32,22 @@ public class ApplicationController {
                         WebMvcLinkBuilder.methodOn(
                                 ApplicationController.class
                         ).retrieveAllApplications()
+                ).withSelfRel());
+    }
+
+    @GetMapping("/applications/sorted/{sort_by}")
+    public CollectionModel<EntityModel<Application>> retrieveAllApplicationsSorted(@PathVariable("sort_by") ApplicationSortingMethod sortBy) {
+        ApplicationComparator applicationComparator = new ApplicationComparator(sortBy);
+        List<EntityModel<Application>> applicationModels = applicationRepository.findAll().stream()
+                .sorted(applicationComparator)
+                .map(applicationModelAssembler::toModel)
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(applicationModels,
+                WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(
+                                ApplicationController.class
+                        ).retrieveAllApplicationsSorted(sortBy)
                 ).withSelfRel());
     }
 
