@@ -1,23 +1,26 @@
-package com.tags.cs451r_groupproject_backend.filetransfer;
+package com.tags.cs451r_groupproject_backend.filetransfer.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "files")
+@Table(name = "file")
 @NoArgsConstructor
 @Getter
 @Setter
 public class File {
     @Id
     @GeneratedValue
+    @Column(name = "f_id")
     private Long id;
 
+    @Column(name = "f_name")
     private String name;
 
+    @Column(name = "f_type")
     private String type;
 
-    @Column(name = "file_data", columnDefinition = "LONGBLOB")
+    @Column(name = "f_data", columnDefinition = "LONGBLOB")
     @Lob
     private byte[] data;
 

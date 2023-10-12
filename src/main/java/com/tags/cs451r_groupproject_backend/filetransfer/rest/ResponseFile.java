@@ -1,4 +1,4 @@
-package com.tags.cs451r_groupproject_backend.filetransfer;
+package com.tags.cs451r_groupproject_backend.filetransfer.rest;
 
 import lombok.*;
 

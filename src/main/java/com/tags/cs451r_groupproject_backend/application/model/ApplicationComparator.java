@@ -1,4 +1,4 @@
-package com.tags.cs451r_groupproject_backend.application;
+package com.tags.cs451r_groupproject_backend.application.model;
 
 import java.util.Comparator;
 
@@ -21,7 +21,7 @@ public class ApplicationComparator implements Comparator<Application> {
     public int compare(Application o1, Application o2) {
         return switch (applicationSortingMethod) {
             case BY_ID -> Long.compare(o1.getId(), o2.getId());
-            case BY_LAST_NAME -> o1.getSurname().compareTo(o2.getSurname());
+            case BY_LAST_NAME -> o1.getLastName().compareTo(o2.getLastName());
             case BY_FIRST_NAME -> o1.getFirstName().compareTo(o2.getFirstName());
         };
     }

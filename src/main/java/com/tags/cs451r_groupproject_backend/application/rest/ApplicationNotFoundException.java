@@ -1,4 +1,4 @@
-package com.tags.cs451r_groupproject_backend.application;
+package com.tags.cs451r_groupproject_backend.application.rest;
 
 public class ApplicationNotFoundException extends RuntimeException {
     public ApplicationNotFoundException(Long id) {
