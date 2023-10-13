@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentController {
 
-    private final StudentService studentService;
+    private StudentService studentService;
     @GetMapping("/students")
     @ResponseStatus(HttpStatus.OK)
     public List<Student> retrieveAllStudents() {
