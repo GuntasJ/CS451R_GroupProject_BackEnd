@@ -30,8 +30,8 @@ public class StudentController {
 
     @PostMapping("/students")
     @ResponseStatus(HttpStatus.CREATED)
-    public Student saveStudent(@RequestBody Student student) {
-        return studentService.saveStudent(student);
+    public Student saveStudent(@RequestBody Student student, @RequestParam(name = "file_id", required = false) Long fileId) {
+        return studentService.saveStudent(student, fileId);
     }
 
     @PutMapping("/students/{id}")

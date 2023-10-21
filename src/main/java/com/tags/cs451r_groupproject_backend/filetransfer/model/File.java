@@ -1,5 +1,6 @@
 package com.tags.cs451r_groupproject_backend.filetransfer.model;
 
+import com.tags.cs451r_groupproject_backend.student.model.Student;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Setter
 public class File {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "f_id")
     private Long id;
 

@@ -1,5 +1,8 @@
 package com.tags.cs451r_groupproject_backend.student.service;
 
+import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
+import com.tags.cs451r_groupproject_backend.filetransfer.repository.FileRepository;
+import com.tags.cs451r_groupproject_backend.filetransfer.rest.FileNotFoundException;
 import com.tags.cs451r_groupproject_backend.student.model.Student;
 import com.tags.cs451r_groupproject_backend.student.repository.StudentRepository;
 import com.tags.cs451r_groupproject_backend.student.rest.StudentNotFoundException;
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class StudentService {
 
     private StudentRepository studentRepository;
+    private FileRepository fileRepository;
 
     public List<Student> findAll() {
         return studentRepository.findAll();
@@ -26,8 +30,17 @@ public class StudentService {
         );
     }
 
-    public Student saveStudent(Student student) {
-        return studentRepository.save(student);
+    public Student saveStudent(Student student, Long fileId) {
+        if(fileId == null) {
+            return studentRepository.save(student);
+        }
+        Optional<File> fileOptional = fileRepository.findById(fileId);
+        if(fileOptional.isPresent()) {
+            student.setFile(fileOptional.get());
+            return student;
+        }
+        throw new FileNotFoundException(fileId);
+
     }
 
     public Student updateStudent(Student student, Long id) {
@@ -36,9 +49,7 @@ public class StudentService {
             student1.setFirstName(student.getFirstName());
             student1.setLastName(student.getLastName());
             return studentRepository.save(student1);
-        }).orElseThrow(
-                () -> new StudentNotFoundException(id)
-        );
+        }).orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     public void deleteStudent(Long id) {

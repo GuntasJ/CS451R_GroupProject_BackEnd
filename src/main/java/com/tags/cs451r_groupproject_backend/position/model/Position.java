@@ -3,6 +3,8 @@ package com.tags.cs451r_groupproject_backend.position.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "position")
 @EqualsAndHashCode
@@ -13,6 +15,7 @@ import lombok.*;
 public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "class_type")

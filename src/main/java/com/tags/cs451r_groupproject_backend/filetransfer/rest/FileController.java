@@ -52,19 +52,20 @@ public class FileController {
         return ResponseEntity.ok(fileList);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/files")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> uploadFile(@RequestParam("file")MultipartFile file) {
+    public ResponseEntity<FilePostResponse> uploadFile(@RequestParam("file")MultipartFile file) {
         String message;
         try {
-            storageService.store(file);
+            File file1 = storageService.store(file);
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
-            return ResponseEntity.ok(message);
+            FilePostResponse filePostResponse = new FilePostResponse(file1.getId(), message);
+            return ResponseEntity.ok(filePostResponse);
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+            FilePostResponse filePostResponse = new FilePostResponse((long) -1, message);
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(filePostResponse);
         }
-
     }
 
 }
