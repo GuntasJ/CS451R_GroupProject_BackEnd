@@ -1,6 +1,7 @@
 package com.tags.cs451r_groupproject_backend.student.rest;
 
 import com.tags.cs451r_groupproject_backend.student.model.Student;
+import com.tags.cs451r_groupproject_backend.student.model.StudentStatus;
 import com.tags.cs451r_groupproject_backend.student.service.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class StudentController {
     @ResponseStatus(HttpStatus.OK)
     public Student updateStudent(@RequestBody Student student, @PathVariable Long id) {
         return studentService.updateStudent(student, id);
+    }
+
+    @PutMapping("/students/{id}/{status}")
+    @ResponseStatus(HttpStatus.OK)
+    public Student updateStatus(@PathVariable Long id, @PathVariable StudentStatus status) {
+        return studentService.updateStatus(id, status);
     }
 
     @DeleteMapping("/students/{id}")

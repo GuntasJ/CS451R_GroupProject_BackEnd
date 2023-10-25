@@ -22,11 +22,10 @@ public class PositionComparator implements Comparator<Position> {
         return switch (positionSortingMethod) {
             case BY_ID -> Long.compare(o1.getId(), o2.getId());
             case BY_DEGREE -> o1.getDegree().compareTo(o2.getDegree());
-            case BY_CLASS_TYPE -> o1.getClassType().compareTo(o2.getClassType());
+            case BY_POSITION_CLASS -> o1.getPositionClass().compareTo(o2.getPositionClass());
             case BY_NOTES -> o1.getNotes().compareTo(o2.getNotes());
             case BY_POSITION_TYPE -> o1.getPositionType().compareTo(o2.getPositionType());
-            case BY_SEMESTER -> o1.getSemester().compareTo(o2.getSemester());
-            case BY_COURSE_NUMBER -> o1.getCourseNumber().compareTo(o2.getCourseNumber());
+            case BY_SEMESTER -> o1.getSemester().get(0).compareTo(o2.getSemester().get(0));
         };
     }
 }

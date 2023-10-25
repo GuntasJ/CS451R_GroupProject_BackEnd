@@ -1,5 +1,6 @@
 package com.tags.cs451r_groupproject_backend.position.model;
 
+import com.tags.cs451r_groupproject_backend.student.model.Student;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,17 +19,15 @@ public class Position {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "class_type")
-    private String classType;
-
-    @Column(name = "course_number")
-    private String courseNumber;
+    @Column(name = "p_class")
+    private String positionClass;
 
     @Column(name = "degree")
     private String degree;
 
+    @ElementCollection
     @Column(name = "semester")
-    private String semester;
+    private List<String> semester;
 
     @Column(name = "position_type")
     private String positionType;
@@ -36,5 +35,8 @@ public class Position {
     @Column(name = "notes")
     private String notes;
 
+    @OneToMany
+    @JoinColumn(name = "position_id")
+    private List<Student> applicants;
 
 }

@@ -5,6 +5,8 @@ import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "student")
 @EqualsAndHashCode
@@ -13,7 +15,6 @@ import lombok.*;
 @Getter
 @Setter
 public class Student {
-
     @Id
     @GeneratedValue
     @Column(name = "s_id")
@@ -49,13 +50,18 @@ public class Student {
     @Column(name = "current_major")
     private String currentMajor;
 
+    @ElementCollection
+    @Column(name = "classes")
+    private List<String> classes;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id", referencedColumnName = "f_id")
     private File file;
 
-    public Student(String firstName, String lastName, Long studentId, String umkcEmail, String currentLevel,
-                   String graduatingSemester, Double umkcGPA, Long hoursDoneAtUmkc, String undergraduateDegree,
-                   String currentMajor) {
+    @Column(name = "status")
+    private StudentStatus studentStatus = StudentStatus.PENDING;
+
+    public Student(String firstName, String lastName, Long studentId, String umkcEmail, String currentLevel, String graduatingSemester, Double umkcGPA, Long hoursDoneAtUmkc, String undergraduateDegree, String currentMajor, List<String> positionClasses) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.studentId = studentId;
@@ -66,5 +72,18 @@ public class Student {
         this.hoursDoneAtUmkc = hoursDoneAtUmkc;
         this.undergraduateDegree = undergraduateDegree;
         this.currentMajor = currentMajor;
+    }
+
+    public void copyFrom(Student student) {
+        this.firstName = student.firstName;
+        this.lastName = student.lastName;
+        this.studentId = student.studentId;
+        this.umkcEmail = student.umkcEmail;
+        this.currentLevel = student.currentLevel;
+        this.graduatingSemester = student.graduatingSemester;
+        this.umkcGPA = student.umkcGPA;
+        this.hoursDoneAtUmkc = student.hoursDoneAtUmkc;
+        this.undergraduateDegree = student.undergraduateDegree;
+        this.currentMajor = student.currentMajor;
     }
 }

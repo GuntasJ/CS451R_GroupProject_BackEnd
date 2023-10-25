@@ -26,6 +26,10 @@ public class PositionService {
         );
     }
 
+    public Position findByPositionClass(String positionClass) {
+        return positionRepository.findByPositionClass(positionClass);
+    }
+
     public Position savePosition(Position position) {
         return positionRepository.save(position);
     }
@@ -37,8 +41,7 @@ public class PositionService {
             position.setNotes(newPosition.getNotes());
             position.setDegree(newPosition.getDegree());
             position.setSemester(newPosition.getSemester());
-            position.setCourseNumber(newPosition.getCourseNumber());
-            position.setClassType(newPosition.getClassType());
+            position.setPositionClass(newPosition.getPositionClass());
             return positionRepository.save(position);
         }).orElseThrow(
                 () -> new PositionNotFoundException(id)
