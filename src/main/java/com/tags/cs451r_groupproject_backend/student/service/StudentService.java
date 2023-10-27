@@ -36,11 +36,12 @@ public class StudentService {
 
     public Student saveStudent(Student student, Long fileId) {
         student.getClasses().forEach(c -> {
-            Position position = positionRepository.findByPositionClass(c);
-            if(position != null) {
-                position.getApplicants().add(student);
+            List<Position> positions = positionRepository.findAllByPositionClass(c);
+            if(!positions.isEmpty()) {
+                positions.get(0).getApplicants().add(student);
             }
         });
+
         if(fileId == null) {
             return studentRepository.save(student);
         }

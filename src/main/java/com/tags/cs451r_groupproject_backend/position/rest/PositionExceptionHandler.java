@@ -18,6 +18,12 @@ public class PositionExceptionHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<BaseRestResponse> handleAlreadyExistException(PositionAlreadyExistsException e) {
+        return BaseRestUtils.generateBaseErrorResponseEntity(e, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseRestResponse> handleBadRequestException(Exception e) {
         return BaseRestUtils.generateBaseErrorResponseEntity(e, HttpStatus.BAD_REQUEST);

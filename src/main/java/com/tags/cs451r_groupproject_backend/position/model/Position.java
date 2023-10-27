@@ -1,9 +1,11 @@
 package com.tags.cs451r_groupproject_backend.position.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tags.cs451r_groupproject_backend.student.model.Student;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +21,7 @@ public class Position {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "p_class")
+    @Column(name = "position_class")
     private String positionClass;
 
     @Column(name = "degree")
@@ -35,8 +37,14 @@ public class Position {
     @Column(name = "notes")
     private String notes;
 
-    @OneToMany
-    @JoinColumn(name = "position_id")
-    private List<Student> applicants;
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
+    )
+    @JoinTable(
+            name = "position_student",
+            joinColumns = @JoinColumn(name = "position_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
 
+    private List<Student> applicants = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.tags.cs451r_groupproject_backend.position.rest;
 
+import com.tags.cs451r_groupproject_backend.position.dto.PositionDTO;
 import com.tags.cs451r_groupproject_backend.position.model.Position;
 import com.tags.cs451r_groupproject_backend.position.service.PositionService;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -17,26 +19,29 @@ public class PositionController {
     private final PositionService positionService;
     @GetMapping("/positions")
     @ResponseStatus(HttpStatus.OK)
-    public List<Position> retrieveAllPositions() {
-        return positionService.findAll();
+    public List<PositionDTO> retrieveAllPositions() {
+        return positionService.findAll()
+                .stream()
+                .map(PositionDTO::new)
+                .toList();
     }
 
     @GetMapping("/positions/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Position retrievePosition(@PathVariable Long id) {
-        return positionService.findById(id);
+    public PositionDTO retrievePosition(@PathVariable Long id) {
+        return new PositionDTO(positionService.findById(id));
     }
 
     @PostMapping("/positions")
     @ResponseStatus(HttpStatus.CREATED)
-    public Position savePosition(@RequestBody Position position) {
-        return positionService.savePosition(position);
+    public PositionDTO savePosition(@RequestBody Position position) {
+        return new PositionDTO(positionService.savePosition(position));
     }
 
     @PutMapping("/positions/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Position updatePosition(@RequestBody Position position, @PathVariable Long id) {
-        return positionService.updatePosition(position, id);
+    public PositionDTO updatePosition(@RequestBody Position position, @PathVariable Long id) {
+        return new PositionDTO(positionService.updatePosition(position, id));
     }
 
     @DeleteMapping("/positions/{id}")

@@ -1,10 +1,13 @@
 package com.tags.cs451r_groupproject_backend.student.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
+import com.tags.cs451r_groupproject_backend.position.model.Position;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,8 +35,8 @@ public class Student {
     @Column(name = "umkc_email")
     private String umkcEmail;
 
-    @Column(name = "current_level")
-    private String currentLevel;
+    @Column(name = "standing")
+    private String standing;
 
     @Column(name = "graduating_semester")
     private String graduatingSemester;
@@ -58,32 +61,33 @@ public class Student {
     @JoinColumn(name = "file_id", referencedColumnName = "f_id")
     private File file;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private StudentStatus studentStatus = StudentStatus.PENDING;
 
-    public Student(String firstName, String lastName, Long studentId, String umkcEmail, String currentLevel, String graduatingSemester, Double umkcGPA, Long hoursDoneAtUmkc, String undergraduateDegree, String currentMajor, List<String> positionClasses) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.studentId = studentId;
-        this.umkcEmail = umkcEmail;
-        this.currentLevel = currentLevel;
-        this.graduatingSemester = graduatingSemester;
-        this.umkcGPA = umkcGPA;
-        this.hoursDoneAtUmkc = hoursDoneAtUmkc;
-        this.undergraduateDegree = undergraduateDegree;
-        this.currentMajor = currentMajor;
-    }
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
+    )
+    @JoinTable(
+            name = "position_student",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "position_id")
+    )
+
+    private List<Position> positions = new ArrayList<>();
 
     public void copyFrom(Student student) {
         this.firstName = student.firstName;
         this.lastName = student.lastName;
         this.studentId = student.studentId;
         this.umkcEmail = student.umkcEmail;
-        this.currentLevel = student.currentLevel;
+        this.standing = student.standing;
         this.graduatingSemester = student.graduatingSemester;
         this.umkcGPA = student.umkcGPA;
         this.hoursDoneAtUmkc = student.hoursDoneAtUmkc;
         this.undergraduateDegree = student.undergraduateDegree;
         this.currentMajor = student.currentMajor;
+        this.studentStatus = student.studentStatus;
+        this.classes = student.classes;
     }
 }

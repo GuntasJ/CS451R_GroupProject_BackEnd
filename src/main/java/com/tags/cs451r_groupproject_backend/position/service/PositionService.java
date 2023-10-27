@@ -2,8 +2,10 @@ package com.tags.cs451r_groupproject_backend.position.service;
 
 import com.tags.cs451r_groupproject_backend.position.model.Position;
 import com.tags.cs451r_groupproject_backend.position.respository.PositionRepository;
+import com.tags.cs451r_groupproject_backend.position.rest.PositionAlreadyExistsException;
 import com.tags.cs451r_groupproject_backend.position.rest.PositionNotFoundException;
-import com.tags.cs451r_groupproject_backend.student.rest.StudentNotFoundException;
+import com.tags.cs451r_groupproject_backend.student.model.Student;
+import com.tags.cs451r_groupproject_backend.student.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PositionService {
     private PositionRepository positionRepository;
+    private StudentRepository studentRepository;
 
     public List<Position> findAll() {
         return positionRepository.findAll();
@@ -26,11 +29,21 @@ public class PositionService {
         );
     }
 
-    public Position findByPositionClass(String positionClass) {
-        return positionRepository.findByPositionClass(positionClass);
+    private boolean isStudentEligibleForPosition(Student student, Position position) {
+        return student.getClasses().contains(position.getPositionClass()) &&
+                student.getStanding().equals(position.getDegree()) &&
+                !position.getApplicants().contains(student);
     }
-
     public Position savePosition(Position position) {
+        //check to see if position already exists in database with name
+        if(!positionRepository.findAllByPositionClass(position.getPositionClass()).isEmpty()) {
+            throw new PositionAlreadyExistsException(position.getPositionClass());
+        }
+
+        studentRepository.findAll()
+                .stream()
+                .filter(student -> isStudentEligibleForPosition(student, position))
+                .forEach(student -> position.getApplicants().add(student));
         return positionRepository.save(position);
     }
 

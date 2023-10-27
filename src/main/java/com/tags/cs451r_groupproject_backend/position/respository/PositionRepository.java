@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PositionRepository extends JpaRepository<Position, Long> {
     @Query("SELECT p FROM Position p WHERE p.positionClass = ?1")
-    Position findByPositionClass(String positionClass);
+    List<Position> findAllByPositionClass(String positionClass);
 }
