@@ -2,10 +2,10 @@ package com.tags.cs451r_groupproject_backend.student.rest;
 
 import com.tags.cs451r_groupproject_backend.student.dto.StudentDTO;
 import com.tags.cs451r_groupproject_backend.student.model.Student;
-import com.tags.cs451r_groupproject_backend.student.model.StudentStatus;
 import com.tags.cs451r_groupproject_backend.student.service.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,42 +13,35 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("tags/api/v1")
 @AllArgsConstructor
 public class StudentController {
 
     private StudentService studentService;
     @GetMapping("/students")
-    @ResponseStatus(HttpStatus.OK)
-    public List<StudentDTO> retrieveAllStudents() {
-        return studentService.findAll()
+    public ResponseEntity<List<StudentDTO>> retrieveAllStudents() {
+         List<StudentDTO> studentDTOList = studentService.findAll()
                 .stream()
                 .map(StudentDTO::new)
                 .toList();
+         return new ResponseEntity<>(studentDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/students/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public StudentDTO retrieveStudent(@PathVariable Long id) {
-        return new StudentDTO(studentService.findById(id));
+    public ResponseEntity<StudentDTO> retrieveStudent(@PathVariable Long id) {
+        StudentDTO studentDTO = new StudentDTO(studentService.findById(id));
+        return new ResponseEntity<>(studentDTO, HttpStatus.OK);
     }
 
     @PostMapping("/students")
-    @ResponseStatus(HttpStatus.CREATED)
-    public StudentDTO saveStudent(@RequestBody Student student, @RequestParam(name = "file_id", required = false) Long fileId) {
-        return new StudentDTO(studentService.saveStudent(student, fileId));
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody Student student) {
+        StudentDTO studentDTO = new StudentDTO(studentService.createStudent(student));
+        return new ResponseEntity<>(studentDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/students/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public StudentDTO updateStudent(@RequestBody Student student, @PathVariable Long id) {
-        return new StudentDTO(studentService.updateStudent(student, id));
-    }
-
-    @PutMapping("/students/{id}/{status}")
-    @ResponseStatus(HttpStatus.OK)
-    public StudentDTO updateStatus(@PathVariable Long id, @PathVariable StudentStatus status) {
-        return new StudentDTO(studentService.updateStatus(id, status));
+    public ResponseEntity<StudentDTO> updateStudent(@RequestBody Student student, @PathVariable Long id) {
+        StudentDTO studentDTO = new StudentDTO(studentService.updateStudent(student, id));
+        return new ResponseEntity<>(studentDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/students/{id}")

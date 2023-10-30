@@ -1,27 +1,26 @@
 package com.tags.cs451r_groupproject_backend.filetransfer.model;
 
-import com.tags.cs451r_groupproject_backend.student.model.Student;
+import com.tags.cs451r_groupproject_backend.general.Copier;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "file")
 @NoArgsConstructor
-@Getter
-@Setter
-public class File {
+@Data
+public class File implements Copier<File> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "f_id")
+    @Column(name = "file_id")
     private Long id;
 
-    @Column(name = "f_name")
+    @Column(name = "file_name")
     private String name;
 
-    @Column(name = "f_type")
+    @Column(name = "file_type")
     private String type;
 
-    @Column(name = "f_data", columnDefinition = "LONGBLOB")
+    @Column(name = "file_data", columnDefinition = "LONGBLOB")
     @Lob
     private byte[] data;
 
@@ -29,5 +28,13 @@ public class File {
         this.name = name;
         this.type = type;
         this.data = data;
+    }
+
+    @Override
+    public void copyFrom(File entity) {
+        this.id = entity.id;
+        this.name = entity.name;
+        this.type = entity.type;
+        this.data = entity.data;
     }
 }

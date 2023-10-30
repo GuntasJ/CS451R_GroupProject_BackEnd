@@ -1,52 +1,47 @@
 package com.tags.cs451r_groupproject_backend.application.rest;
 
+import com.tags.cs451r_groupproject_backend.application.dto.ApplicationDTO;
 import com.tags.cs451r_groupproject_backend.application.model.Application;
-import com.tags.cs451r_groupproject_backend.application.model.ApplicationSortingMethod;
 import com.tags.cs451r_groupproject_backend.application.service.ApplicationService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("tags/api/v1")
 @AllArgsConstructor
 public class ApplicationController {
 
     private ApplicationService applicationService;
 
     @GetMapping("/applications")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Application> retrieveAllApplications() {
-        return applicationService.findAll();
-    }
-
-    @GetMapping("/applications/sorted/{sort_by}")
-    public List<Application> retrieveAllApplicationsSorted(@PathVariable("sort_by") ApplicationSortingMethod sortBy) {
-        //todo:
-        return null;
+    public ResponseEntity<List<ApplicationDTO>> retrieveAllApplications() {
+        List<ApplicationDTO> applicationDTOList = applicationService.findAll()
+                .stream()
+                .map(ApplicationDTO::new)
+                .toList();
+        return new ResponseEntity<>(applicationDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/applications/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Application retrieveApplication(@PathVariable Long id) {
-        return applicationService.findById(id);
+    public ResponseEntity<ApplicationDTO> retrieveApplication(@PathVariable Long id) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.findById(id));
+        return new ResponseEntity<>(applicationDTO, HttpStatus.OK);
     }
 
     @PostMapping("/applications")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Application saveApplication(@RequestBody Application application) {
-        return applicationService.saveApplication(application);
+    public ResponseEntity<ApplicationDTO> createApplication(@RequestBody Application application) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.createApplication(application));
+        return new ResponseEntity<>(applicationDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/applications/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Application updateApplication(@RequestBody Application newApplication, @PathVariable Long id) {
-        return applicationService.updateApplication(newApplication, id);
+    public ResponseEntity<ApplicationDTO> updateApplication(@RequestBody Application newApplication, @PathVariable Long id) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.updateApplication(newApplication, id));
+        return new ResponseEntity<>(applicationDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/applications/{id}")

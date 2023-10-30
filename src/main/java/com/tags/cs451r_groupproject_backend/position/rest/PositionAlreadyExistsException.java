@@ -1,7 +1,7 @@
 package com.tags.cs451r_groupproject_backend.position.rest;
 
 public class PositionAlreadyExistsException extends RuntimeException {
-    public PositionAlreadyExistsException(String className) {
-        super("Position already exists with (name): " + className);
+    public PositionAlreadyExistsException(String positionClass, String positionType) {
+        super("Position already exists with (class/type): " + positionClass + ", " + positionType);
     }
 }

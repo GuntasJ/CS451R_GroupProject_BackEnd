@@ -1,11 +1,11 @@
 package com.tags.cs451r_groupproject_backend.position.service;
 
+import com.tags.cs451r_groupproject_backend.application.model.Application;
+import com.tags.cs451r_groupproject_backend.application.repository.ApplicationRepository;
 import com.tags.cs451r_groupproject_backend.position.model.Position;
+import com.tags.cs451r_groupproject_backend.position.model.PositionId;
 import com.tags.cs451r_groupproject_backend.position.respository.PositionRepository;
-import com.tags.cs451r_groupproject_backend.position.rest.PositionAlreadyExistsException;
 import com.tags.cs451r_groupproject_backend.position.rest.PositionNotFoundException;
-import com.tags.cs451r_groupproject_backend.student.model.Student;
-import com.tags.cs451r_groupproject_backend.student.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,52 +16,43 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PositionService {
     private PositionRepository positionRepository;
-    private StudentRepository studentRepository;
+    private ApplicationRepository applicationRepository;
 
     public List<Position> findAll() {
         return positionRepository.findAll();
     }
 
-    public Position findById(Long id) {
+    public Position findById(PositionId id) {
         Optional<Position> positionOptional = positionRepository.findById(id);
-        return positionOptional.orElseThrow(
-                () -> new PositionNotFoundException(id)
-        );
+        return positionOptional.orElseThrow(() -> new PositionNotFoundException(id));
     }
 
-    private boolean isStudentEligibleForPosition(Student student, Position position) {
-        return student.getClasses().contains(position.getPositionClass()) &&
-                student.getStanding().equals(position.getDegree()) &&
-                !position.getApplicants().contains(student);
+    private boolean isApplicationEligibleForPosition(Application application, Position position) {
+        return application.getDesiredClasses().contains(position.getPositionClass()) &&
+                application.getStanding().equals(position.getRequiredStanding());
     }
-    public Position savePosition(Position position) {
-        //check to see if position already exists in database with name
-        if(!positionRepository.findAllByPositionClass(position.getPositionClass()).isEmpty()) {
-            throw new PositionAlreadyExistsException(position.getPositionClass());
-        }
-
-        studentRepository.findAll()
+    public Position createPosition(Position position) {
+        //When saving a position, check if there are applicants that have desiredClasses that match up with that position
+        //If so, add them to the position
+        //Don't add them if they do not meet the required standing
+        applicationRepository.findAll()
                 .stream()
-                .filter(student -> isStudentEligibleForPosition(student, position))
-                .forEach(student -> position.getApplicants().add(student));
+                .filter(application -> isApplicationEligibleForPosition(application, position))
+                .forEach(position::addApplication);
+
         return positionRepository.save(position);
     }
 
-    public Position updatePosition(Position newPosition, Long id) {
+    public Position updatePosition(Position newPosition, PositionId id) {
         return positionRepository.findById(id).map(position -> {
-            position.setId(newPosition.getId());
-            position.setPositionType(newPosition.getPositionType());
-            position.setNotes(newPosition.getNotes());
-            position.setDegree(newPosition.getDegree());
-            position.setSemester(newPosition.getSemester());
-            position.setPositionClass(newPosition.getPositionClass());
+            position.copyFrom(newPosition);
             return positionRepository.save(position);
         }).orElseThrow(
                 () -> new PositionNotFoundException(id)
         );
     }
 
-    public void deletePosition(Long id) {
+    public void deletePosition(PositionId id) {
         Optional<Position> positionOptional = positionRepository.findById(id);
         if(positionOptional.isPresent()) {
             positionRepository.delete(positionOptional.get());

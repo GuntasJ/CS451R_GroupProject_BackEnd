@@ -1,30 +1,31 @@
 package com.tags.cs451r_groupproject_backend.administrator.model;
 
+import com.tags.cs451r_groupproject_backend.general.Copier;
 import jakarta.persistence.*;
 import lombok.*;
 
 
 @Entity
 @Table(name = "administrator")
-@EqualsAndHashCode
-@ToString
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
-public class Administrator {
+public class Administrator implements Copier<Administrator> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adm_id")
+    @Column(name = "admin_id")
     private Long id;
 
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "username", unique = true)
+    private String username;
 
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(name = "password")
+    private String password;
 
-    public Administrator(String firstName, String surname) {
-        this.firstName = firstName;
-        this.lastName = surname;
+    @Override
+    public void copyFrom(Administrator entity) {
+        this.id = entity.getId();
+        this.username = entity.getUsername();
+        this.password = entity.getPassword();
     }
 }
