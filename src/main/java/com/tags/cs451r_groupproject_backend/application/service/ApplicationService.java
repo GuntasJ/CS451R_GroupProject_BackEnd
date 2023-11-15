@@ -8,14 +8,14 @@ import com.tags.cs451r_groupproject_backend.filetransfer.repository.FileReposito
 import com.tags.cs451r_groupproject_backend.filetransfer.rest.FileNotFoundException;
 import com.tags.cs451r_groupproject_backend.position.model.PositionId;
 import com.tags.cs451r_groupproject_backend.position.respository.PositionRepository;
-import com.tags.cs451r_groupproject_backend.student.rest.StudentNotFoundException;
+import com.tags.cs451r_groupproject_backend.user.User;
+import com.tags.cs451r_groupproject_backend.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +24,7 @@ public class ApplicationService {
     private ApplicationRepository applicationRepository;
     private PositionRepository positionRepository;
     private FileRepository fileRepository;
+    private UserRepository userRepository;
 
     public List<Application> findAll() {
         return applicationRepository.findAll();
@@ -38,7 +39,7 @@ public class ApplicationService {
         return findById(id).getFiles();
     }
 
-    public Application createApplication(Application application, Long fileId) {
+    public Application createApplication(Application application, Long fileId, Long studentId) {
         //Check if a valid position exists that matches up with the applications desiredClasses.
         //If so, add it to it.
         //Don't add the position if the application doesn't meet the required standing.
@@ -54,6 +55,12 @@ public class ApplicationService {
             fileOptional.ifPresent(file -> file.setOwnerApplicationId(application.getId()));
             application.addFile(fileOptional.orElseThrow(() -> new FileNotFoundException(fileId)));
         }
+
+        User user = userRepository.findById(studentId).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
+
+        user.addApplication(application);
 
         return applicationRepository.save(application);
     }
@@ -80,9 +87,7 @@ public class ApplicationService {
             applicationRepository.delete(applicationOptional.get());
         }
         else {
-            throw new StudentNotFoundException(id);
+            throw new ApplicationNotFoundException(id);
         }
     }
-
-
 }

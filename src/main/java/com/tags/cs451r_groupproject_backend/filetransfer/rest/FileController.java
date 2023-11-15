@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @AllArgsConstructor
 public class FileController {
     private FileService storageService;

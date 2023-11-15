@@ -14,9 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin
+@RequestMapping("/admin")
 @AllArgsConstructor
-
 public class PositionController {
     private final PositionService positionService;
     @GetMapping("/positions")

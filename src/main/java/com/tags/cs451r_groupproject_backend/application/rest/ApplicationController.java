@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @AllArgsConstructor
 public class ApplicationController {
 
     private ApplicationService applicationService;
-
     @GetMapping("/applications")
     public ResponseEntity<List<ApplicationDTO>> retrieveAllApplications() {
         List<ApplicationDTO> applicationDTOList = applicationService.findAll()
@@ -44,11 +42,11 @@ public class ApplicationController {
 
     @PostMapping("/applications")
     public ResponseEntity<ApplicationDTO> createApplication(@RequestBody Application application,
-                                                            @RequestParam(name = "file_id", required = false) Long fileId) {
-        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.createApplication(application, fileId));
+                                                            @RequestParam(name = "file_id", required = false) Long fileId,
+                                                            @RequestParam(name = "student_id") Long studentId) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.createApplication(application, fileId, studentId));
         return new ResponseEntity<>(applicationDTO, HttpStatus.CREATED);
     }
-
 
     @PutMapping("/applications/{id}")
     public ResponseEntity<ApplicationDTO> updateApplication(@RequestBody Application newApplication, @PathVariable Long id) {

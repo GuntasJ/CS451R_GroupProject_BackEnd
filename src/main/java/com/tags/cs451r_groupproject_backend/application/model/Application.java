@@ -3,6 +3,7 @@ package com.tags.cs451r_groupproject_backend.application.model;
 import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
 import com.tags.cs451r_groupproject_backend.general.Copier;
 import com.tags.cs451r_groupproject_backend.position.model.Position;
+import com.tags.cs451r_groupproject_backend.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -73,6 +74,11 @@ public class Application implements Copier<Application> {
     }, orphanRemoval = true)
     @JoinColumn(name = "owner_application_id", referencedColumnName = "application_id")
     private List<File> files = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "user_student_id")
+    private User student;
+
 
     @ManyToMany(mappedBy = "applicants",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
