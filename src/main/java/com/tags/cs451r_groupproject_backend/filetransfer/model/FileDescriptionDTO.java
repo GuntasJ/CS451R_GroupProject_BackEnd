@@ -9,9 +9,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @NoArgsConstructor
 public class FileDescriptionDTO implements Copier<File> {
 
+    private Long id;
     private String name;
     private String type;
-    private long fileLength;
+    private Long fileLength;
     private String uriDownload;
 
     public FileDescriptionDTO(File file) {
@@ -21,7 +22,8 @@ public class FileDescriptionDTO implements Copier<File> {
     public void copyFrom(File entity) {
         this.name = entity.getName();
         this.type = entity.getType();
-        this.fileLength = entity.getData().length;
+        this.fileLength = (long) entity.getData().length;
+        this.id = entity.getId();
         this.uriDownload = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/files/")

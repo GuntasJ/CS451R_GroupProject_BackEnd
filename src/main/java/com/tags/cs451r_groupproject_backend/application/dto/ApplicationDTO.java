@@ -2,6 +2,8 @@ package com.tags.cs451r_groupproject_backend.application.dto;
 
 import com.tags.cs451r_groupproject_backend.application.model.Application;
 import com.tags.cs451r_groupproject_backend.application.model.ApplicationStatus;
+import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
+import com.tags.cs451r_groupproject_backend.filetransfer.model.FileDescriptionDTO;
 import com.tags.cs451r_groupproject_backend.general.Copier;
 import com.tags.cs451r_groupproject_backend.filetransfer.rest.ResponseFile;
 import com.tags.cs451r_groupproject_backend.position.dto.PositionDTO;
@@ -11,7 +13,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -29,9 +33,8 @@ public class ApplicationDTO implements Copier<Application>  {
     private String currentMajor;
     private List<String> desiredClasses;
     private List<String> desiredTypes;
-    private ResponseFile file;
+    private List<FileDescriptionDTO> files = new ArrayList<>();
     private ApplicationStatus applicationStatus;
-
     private List<PositionDTO> positions = new ArrayList<>();
 
     public ApplicationDTO(Application application) {
@@ -61,17 +64,20 @@ public class ApplicationDTO implements Copier<Application>  {
         this.desiredTypes = entity.getDesiredTypes();
         this.applicationStatus = entity.getApplicationStatus();
 
-        String fileDownloadUri = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .path("/files/")
-                .path(String.valueOf(entity.getFile().getId()))
-                .toUriString();
-
-        this.file = new ResponseFile(
-                entity.getFile().getName(),
-                fileDownloadUri,
-                entity.getFile().getType(),
-                (long) entity.getFile().getData().length
-        );
+        for(File file : entity.getFiles()) {
+            files.add(new FileDescriptionDTO(file));
+        }
+//        String fileDownloadUri = ServletUriComponentsBuilder
+//                .fromCurrentContextPath()
+//                .path("/files/")
+//                .path(String.valueOf(entity.getFile().getId()))
+//                .toUriString();
+//
+//        this.file = new ResponseFile(
+//                entity.getFile().getName(),
+//                fileDownloadUri,
+//                entity.getFile().getType(),
+//                (long) entity.getFile().getData().length
+//        );
     }
 }

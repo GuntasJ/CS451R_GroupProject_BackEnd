@@ -6,6 +6,7 @@ import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +24,10 @@ public class FileController {
         File file = storageService.findById(id);
 
         return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + file.getName() + "\""
+                        "inline"
                 ).body(file.getData());
     }
 

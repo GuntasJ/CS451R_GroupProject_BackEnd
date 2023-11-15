@@ -7,16 +7,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
 @Table(name = "application")
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Application implements Copier<Application> {
     @Id
     @GeneratedValue
+    @EqualsAndHashCode.Include
     @Column(name = "application_id")
     private Long id;
 
@@ -64,22 +68,35 @@ public class Application implements Copier<Application> {
     @Column(name = "type")
     private List<String> desiredTypes;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "file_id", referencedColumnName = "file_id")
-    private File file;
+    @OneToMany(cascade = {
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH
+    }, orphanRemoval = true)
+    @JoinColumn(name = "owner_application_id", referencedColumnName = "application_id")
+    private List<File> files = new ArrayList<>();
 
-    @ManyToMany(
+    @ManyToMany(mappedBy = "applicants",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
-    )
-    @JoinTable(
-            name = "applying",
-            joinColumns = @JoinColumn(name = "application_id"),
-            inverseJoinColumns = {@JoinColumn(name = "position_class"), @JoinColumn(name = "position_type")}
     )
     private List<Position> positions = new ArrayList<>();
 
+    public void addFile(File file) {
+        if(!files.contains(file)) {
+            files.add(file);
+        }
+    }
+
+    public void removeFile(File file) {
+        files.remove(file);
+    }
+
     public void addPosition(Position position) {
         positions.add(position);
+        position.getApplicants().add(this);
+    }
+
+    public void removePosition(Position position) {
+        positions.remove(position);
+        position.getApplicants().remove(this);
     }
 
     @Override
@@ -97,5 +114,7 @@ public class Application implements Copier<Application> {
         this.applicationStatus = entity.applicationStatus;
         this.desiredClasses = entity.desiredClasses;
         this.desiredTypes = entity.desiredTypes;
+        this.files = entity.files;
+        this.positions = entity.positions;
     }
 }

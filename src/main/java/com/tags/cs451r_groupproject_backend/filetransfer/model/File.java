@@ -24,6 +24,9 @@ public class File implements Copier<File> {
     @Lob
     private byte[] data;
 
+    @Column(name = "owner_application_id")
+    private Long ownerApplicationId;
+
     public File(String name, String type, byte[] data) {
         this.name = name;
         this.type = type;

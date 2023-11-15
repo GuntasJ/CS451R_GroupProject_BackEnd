@@ -12,13 +12,16 @@ import java.util.List;
 @Table(name = "position")
 @IdClass(PositionId.class)
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 public class Position implements Copier<Position> {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "position_class")
     private String positionClass;
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "position_type")
     private String positionType;
@@ -34,28 +37,35 @@ public class Position implements Copier<Position> {
             name = "running_semester",
             joinColumns = {@JoinColumn(name = "position_class"), @JoinColumn(name = "position_type")}
     )
-    @Column(name = "semester")
-    private List<String> semester;
+    @Column(name = "semesters")
+    private List<String> semesters;
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH}
-    )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "applying",
-            joinColumns = {@JoinColumn(name = "position_class"), @JoinColumn(name = "position_type")},
+            joinColumns = {
+                    @JoinColumn(name = "position_class"), @JoinColumn(name = "position_type")
+            },
             inverseJoinColumns = @JoinColumn(name = "application_id")
     )
+    @ToString.Exclude
     private List<Application> applicants = new ArrayList<>();
 
     public void addApplication(Application application) {
         applicants.add(application);
+        application.getPositions().add(this);
+    }
+
+    public void removeApplication(Application application) {
+        applicants.remove(application);
+        application.getPositions().remove(this);
     }
 
     @Override
     public void copyFrom(Position entity) {
         this.positionClass = entity.positionClass;
         this.requiredStanding = entity.requiredStanding;
-        this.semester = entity.semester;
+        this.semesters = entity.semesters;
         this.positionType = entity.positionType;
         this.notes = entity.notes;
         this.applicants = entity.applicants;

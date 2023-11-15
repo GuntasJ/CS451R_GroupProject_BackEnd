@@ -3,6 +3,7 @@ package com.tags.cs451r_groupproject_backend.application.rest;
 import com.tags.cs451r_groupproject_backend.application.dto.ApplicationDTO;
 import com.tags.cs451r_groupproject_backend.application.model.Application;
 import com.tags.cs451r_groupproject_backend.application.service.ApplicationService;
+import com.tags.cs451r_groupproject_backend.filetransfer.model.FileDescriptionDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +33,22 @@ public class ApplicationController {
         return new ResponseEntity<>(applicationDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/applications/{id}/files")
+    public ResponseEntity<List<FileDescriptionDTO>> retrieveApplicationFiles(@PathVariable Long id) {
+        List<FileDescriptionDTO> fileDescriptionDTOList = applicationService.findFilesByApplicationId(id)
+                .stream()
+                .map(FileDescriptionDTO::new)
+                .toList();
+        return new ResponseEntity<>(fileDescriptionDTOList, HttpStatus.OK);
+    }
+
     @PostMapping("/applications")
-    public ResponseEntity<ApplicationDTO> createApplication(@RequestBody Application application) {
-        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.createApplication(application));
+    public ResponseEntity<ApplicationDTO> createApplication(@RequestBody Application application,
+                                                            @RequestParam(name = "file_id", required = false) Long fileId) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.createApplication(application, fileId));
         return new ResponseEntity<>(applicationDTO, HttpStatus.CREATED);
     }
+
 
     @PutMapping("/applications/{id}")
     public ResponseEntity<ApplicationDTO> updateApplication(@RequestBody Application newApplication, @PathVariable Long id) {

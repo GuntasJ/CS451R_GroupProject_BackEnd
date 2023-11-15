@@ -1,6 +1,7 @@
 package com.tags.cs451r_groupproject_backend.position.rest;
 
 import com.tags.cs451r_groupproject_backend.position.dto.PositionDTO;
+import com.tags.cs451r_groupproject_backend.position.model.Note;
 import com.tags.cs451r_groupproject_backend.position.model.Position;
 import com.tags.cs451r_groupproject_backend.position.model.PositionId;
 import com.tags.cs451r_groupproject_backend.position.service.PositionService;
@@ -47,6 +48,15 @@ public class PositionController {
                                                       @PathVariable("type") String positionType) {
         PositionId id = new PositionId(positionClass, positionType);
         PositionDTO positionDTO = new PositionDTO(positionService.updatePosition(position, id));
+        return new ResponseEntity<>(positionDTO, HttpStatus.OK);
+    }
+
+    @PatchMapping("/positions/{class}/{type}/notes")
+    public ResponseEntity<PositionDTO> updatePositionNotes(@RequestBody Note note,
+                                                           @PathVariable("class") String positionClass,
+                                                           @PathVariable("type") String positionType) {
+        PositionId id = new PositionId(positionClass, positionType);
+        PositionDTO positionDTO = new PositionDTO(positionService.updatePositionNotes(note, id));
         return new ResponseEntity<>(positionDTO, HttpStatus.OK);
     }
 
