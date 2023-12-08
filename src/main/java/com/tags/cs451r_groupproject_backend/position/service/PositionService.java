@@ -6,6 +6,7 @@ import com.tags.cs451r_groupproject_backend.position.model.Note;
 import com.tags.cs451r_groupproject_backend.position.model.Position;
 import com.tags.cs451r_groupproject_backend.position.model.PositionId;
 import com.tags.cs451r_groupproject_backend.position.respository.PositionRepository;
+import com.tags.cs451r_groupproject_backend.position.rest.InvalidPositionException;
 import com.tags.cs451r_groupproject_backend.position.rest.PositionAlreadyExistsException;
 import com.tags.cs451r_groupproject_backend.position.rest.PositionNotFoundException;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,20 @@ public class PositionService {
                 application.getStanding().equals(position.getRequiredStanding());
     }
     public Position createPosition(Position position) {
+        //Check if the Position is valid
+        if(position.getPositionClass() == null || position.getPositionClass().equals("")) {
+            throw new InvalidPositionException();
+        }
+
+        if(position.getRequiredStanding() == null || position.getRequiredStanding().equals("")) {
+            throw new InvalidPositionException();
+        }
+
+        if(position.getSemesters().isEmpty()) {
+            throw new InvalidPositionException();
+        }
+
+
         //Throw exception if position already exists
         PositionId id = new PositionId(position.getPositionClass(), position.getPositionType());
         if(positionRepository.findById(id).isPresent()) {
@@ -68,8 +83,8 @@ public class PositionService {
         Optional<Position> positionOptional = positionRepository.findById(id);
         if(positionOptional.isPresent()) {
             Position position = positionOptional.get();
-            for(int i = 0; i < position.getApplicants().size(); i++) {
-                position.removeApplication(position.getApplicants().get(i));
+            while(!position.getApplicants().isEmpty()) {
+                position.removeApplication(position.getApplicants().get(0));
             }
             positionRepository.delete(positionOptional.get());
         }

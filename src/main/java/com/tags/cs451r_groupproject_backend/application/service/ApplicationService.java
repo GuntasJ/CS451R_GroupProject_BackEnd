@@ -1,6 +1,7 @@
 package com.tags.cs451r_groupproject_backend.application.service;
 
 import com.tags.cs451r_groupproject_backend.application.model.Application;
+import com.tags.cs451r_groupproject_backend.application.model.ApplicationStatus;
 import com.tags.cs451r_groupproject_backend.application.rest.ApplicationNotFoundException;
 import com.tags.cs451r_groupproject_backend.application.repository.ApplicationRepository;
 import com.tags.cs451r_groupproject_backend.filetransfer.model.File;
@@ -76,18 +77,24 @@ public class ApplicationService {
         Optional<Application> applicationOptional = applicationRepository.findById(id);
         if(applicationOptional.isPresent()) {
             Application application = applicationOptional.get();
-            for(int i = 0; i < application.getFiles().size(); i++) {
-                application.getFiles().get(i).setOwnerApplicationId(null);
-                application.removeFile(application.getFiles().get(i));
+            while(application.getFiles().size() != 0) {
+                application.getFiles().get(0).setOwnerApplicationId(null);
+                application.removeFile(application.getFiles().get(0));
             }
-            for(int i = 0; i < application.getPositions().size(); i++) {
-                application.removePosition(application.getPositions().get(i));
+            while(application.getPositions().size() != 0) {
+                application.removePosition(application.getPositions().get(0));
             }
-            applicationOptional.get().getPositions().forEach(applicationOptional.get()::removePosition);
-            applicationRepository.delete(applicationOptional.get());
+            applicationRepository.delete(application);
         }
         else {
             throw new ApplicationNotFoundException(id);
         }
+    }
+
+    public Application updateStatus(ApplicationStatus applicationStatus, Long id) {
+        return applicationRepository.findById(id).map(application -> {
+            application.setApplicationStatus(applicationStatus);
+            return applicationRepository.save(application);
+        }).orElseThrow(() -> new ApplicationNotFoundException(id));
     }
 }

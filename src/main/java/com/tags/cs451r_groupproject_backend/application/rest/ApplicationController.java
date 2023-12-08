@@ -2,6 +2,7 @@ package com.tags.cs451r_groupproject_backend.application.rest;
 
 import com.tags.cs451r_groupproject_backend.application.dto.ApplicationDTO;
 import com.tags.cs451r_groupproject_backend.application.model.Application;
+import com.tags.cs451r_groupproject_backend.application.model.ApplicationStatus;
 import com.tags.cs451r_groupproject_backend.application.service.ApplicationService;
 import com.tags.cs451r_groupproject_backend.filetransfer.model.FileDescriptionDTO;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,12 @@ public class ApplicationController {
     @PutMapping("/applications/{id}")
     public ResponseEntity<ApplicationDTO> updateApplication(@RequestBody Application newApplication, @PathVariable Long id) {
         ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.updateApplication(newApplication, id));
+        return new ResponseEntity<>(applicationDTO, HttpStatus.OK);
+    }
+
+    @PatchMapping("/applications/{id}/status")
+    public ResponseEntity<ApplicationDTO> updateStatus(@RequestBody ApplicationStatus applicationStatus, @PathVariable Long id) {
+        ApplicationDTO applicationDTO = new ApplicationDTO(applicationService.updateStatus(applicationStatus, id));
         return new ResponseEntity<>(applicationDTO, HttpStatus.OK);
     }
 

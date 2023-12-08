@@ -38,7 +38,7 @@ public class SecurityConfiguration {
         }
         );
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        //TODO: set the request matchers
+        //TODO: make file secured
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/files/{id}").permitAll()
